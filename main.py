@@ -21,35 +21,60 @@ conn.close()
 
 cursor = conn.cursor()
 
-print("Conference Management")
-print("---------------------")
-print("Menu") 
-print("----")
-print("----")
-print("1 - View Speakers & Sessions")
-print("2 - View Attendees by Company")
-print("3 - Add New Attendee")
+while True:
+    print("Conference Management")
+    print("---------------------")
+    print("Menu")
+    print("----")
+    print("1 - View Speakers & Sessions")
+    print("2 - View Attendees by Company")
+    print("3 - Add New Attendee")
+    print("4 - Exit")
 
-choice = input("Choice:")
+    choice = input("Choice: ")
 
-if choice == "1":
+    if choice == "1":
+        speaker = input("Enter speaker name: ")
 
-    input = (input("Enter speaker name :"))
-    
-    query = """
-    SELECT speakerName 
-    FROM session 
-    WHERE speakerName LIKE %s
-    """
-    cursor.execute(query, ('%' + input + '%',))
-    results = cursor.fetchall()
+        query = """
+        SELECT speakerName, sessionTitle, roomID
+        FROM session
+        WHERE speakerName LIKE %s
+        """
 
-    for row in results:
-        print(row)
+        cursor.execute(query, ('%' + speaker + '%',))
+        results = cursor.fetchall()
 
-else:
-    print("Wrong choice")
+        if not results:
+            print("No speakers found with that name")
+        else:
+            for row in results:
+                print(row)
 
+
+    elif choice == "2":
+        print("Option 2 not done yet")
+
+    elif choice == "3":
+        print("Option 3 not done yet")
+
+    elif choice == "4":
+        print("Goodbye")
+        break
+
+    else:
+        print("Wrong choice")
+
+'''
+CREATE TABLE session (
+    sessionID INT PRIMARY KEY,
+    sessionTitle VARCHAR(150) NOT NULL,
+    speakerName VARCHAR(100) NOT NULL,
+    sessionDate DATE NOT NULL,
+    roomID INT NOT NULL,
+    FOREIGN KEY (roomID) REFERENCES room(roomID)
+);
+'''
 
 
 
