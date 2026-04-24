@@ -52,8 +52,30 @@ while True:
                 print(row)
 
 
-    elif choice == "2":
-        print("Option 2 not done yet")
+    if choice == "2":
+        id = input("Enter Company ID:")
+
+        query = """
+            SELECT a.attendeeName, a.attendeeDOB, s.sessionTitle, s.speakerName, r.roomName
+            FROM attendee a
+            JOIN registration reg
+            ON a.attendeeID = reg.attendeeID
+            JOIN session s
+            ON s.sessionID = reg.sessionID
+            JOIN room r
+            ON r.roomID = s.roomID;
+            WHERE a.attendeeCompanyID = %s
+            """
+
+
+        cursor.execute(query, (id,))
+        results = cursor.fetchall()
+
+        if len(results) == 0:
+            print("No attendees found for that company ID")
+        else:
+            for row in results:
+                print(row)
 
     elif choice == "3":
         print("Option 3 not done yet")
