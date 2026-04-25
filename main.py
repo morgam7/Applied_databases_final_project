@@ -52,30 +52,54 @@ while True:
                 print(row)
 
 
-    if choice == "2":
-        id = input("Enter Company ID:")
+    elif choice == "2":
+        
+        while True:
+            company_id = input("Enter Company ID:")
 
-        query = """
-            SELECT a.attendeeName, a.attendeeDOB, s.sessionTitle, s.speakerName, r.roomName
-            FROM attendee a
-            JOIN registration reg
-            ON a.attendeeID = reg.attendeeID
-            JOIN session s
-            ON s.sessionID = reg.sessionID
-            JOIN room r
-            ON r.roomID = s.roomID;
-            WHERE a.attendeeCompanyID = %s
+            if not company_id.isdigit() or int(company_id) <= 0:
+                continue
+
+            check_query = """
+                SELECT companyID, companyName 
+                FROM company
+                WHERE companyID = %s
             """
 
+            cursor.execute(check_query, (company_id,))
+            company = cursor.fetchone()
 
-        cursor.execute(query, (id,))
-        results = cursor.fetchall()
+            if company is None:
+                print(f"Company with ID {company_id} doesn't exist")
+                continue
+            
+            company_name = company[1]
 
-        if len(results) == 0:
-            print("No attendees found for that company ID")
-        else:
-            for row in results:
-                print(row)
+            query = """
+                SELECT a.attendeeName, a.attendeeDOB, s.sessionTitle, s.speakerName, r.roomName
+                FROM attendee a
+                JOIN registration reg
+                ON a.attendeeID = reg.attendeeID
+                JOIN session s
+                ON s.sessionID = reg.sessionID
+                JOIN room r
+                ON r.roomID = s.roomID
+                WHERE a.attendeeCompanyID = %s
+                """
+
+
+            cursor.execute(query, (company_id,))
+            results = cursor.fetchall()
+
+            if len(results) == 0:
+                print(f"{company_name} attendees.")
+                print(f"No attendees found for {company_name}")
+                continue
+            else:
+                for row in results:
+                    print(row)
+
+                break
 
     elif choice == "3":
         print("Option 3 not done yet")
