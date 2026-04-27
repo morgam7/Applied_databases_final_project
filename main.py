@@ -102,8 +102,65 @@ while True:
                 break
 
     elif choice == "3":
-        print("Option 3 not done yet")
 
+        valid = True
+
+        print("Add New Attendee :")
+        print("----------------")
+
+        attendeeID = input("Attendee ID : ")
+        name = input("Name : ")
+        dob = input("DOB : ")
+        gender = input("Gender : ").lower()
+        companyID = input("Company ID : ")
+
+        # Check gender
+        if gender not in ["male", "female"]:
+            print("***ERROR*** Gender must be male/female")
+            valid = False
+
+        # Check company ID exists
+        check_company_query = """
+        SELECT companyID
+        FROM company
+        WHERE companyID = %s
+        """
+
+        cursor.execute(check_company_query, (companyID,))
+        company_result = cursor.fetchone()
+
+        if company_result is None:
+            print(f"***ERROR*** Company ID: {companyID} does not exist.")
+            valid = False
+
+        # Only try to insert if the other checks passed
+        if valid:
+            insert_query = """
+            INSERT INTO attendee 
+            (attendeeID, attendeeName, attendeeDOB, attendeeGender, attendeeCompanyID)
+            VALUES (%s, %s, %s, %s, %s)
+            """
+
+            try:
+                cursor.execute(insert_query, (attendeeID, name, dob, gender, companyID))
+                conn.commit()
+                print("New attendee added successfully.")
+
+            except mysql.connector.IntegrityError:
+                print(f"***ERROR*** Attendee ID: {attendeeID} already exists.")
+
+        else:
+            print("Attendee was not added because there was an error.")
+        
+
+            
+
+    
+    
+    
+    
+    
+    
     elif choice == "4":
         print("Goodbye")
         break
@@ -121,6 +178,9 @@ CREATE TABLE session (
     FOREIGN KEY (roomID) REFERENCES room(roomID)
 );
 '''
+
+
+
 
 
 
