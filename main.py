@@ -1,4 +1,5 @@
 import mysql.connector
+from datetime import datetime
 
 conn = mysql.connector.connect(
     host="localhost",
@@ -114,10 +115,27 @@ while True:
         gender = input("Gender : ").lower()
         companyID = input("Company ID : ")
 
+
+        # Check Attendee ID exists
+        check_attendee_query = """
+        SELECT attendeeID
+        FROM attendee
+        WHERE attendeeID = %s
+        """
+
+        cursor.execute(check_attendee_query, (attendeeID,))
+        attendee_result = cursor.fetchone()
+
+        if attendee_result is not None:
+            print(f"***ERROR*** Atendee ID: {attendeeID} already exists.")
+            valid = False
+
+
         # Check gender
         if gender not in ["male", "female"]:
             print("***ERROR*** Gender must be male/female")
             valid = False
+
 
         # Check company ID exists
         check_company_query = """
@@ -133,7 +151,10 @@ while True:
             print(f"***ERROR*** Company ID: {companyID} does not exist.")
             valid = False
 
+
+
         # Only try to insert if the other checks passed
+        # Only insert if all checks passed
         if valid:
             insert_query = """
             INSERT INTO attendee 
@@ -144,13 +165,12 @@ while True:
             try:
                 cursor.execute(insert_query, (attendeeID, name, dob, gender, companyID))
                 conn.commit()
+
                 print("New attendee added successfully.")
 
-            except mysql.connector.IntegrityError:
-                print(f"***ERROR*** Attendee ID: {attendeeID} already exists.")
-
-        else:
-            print("Attendee was not added because there was an error.")
+            except mysql.connector.Error as err:
+                print(f"***ERROR*** {err}")
+                #print(f"***ERROR*** ({err.errno}, \"{err.msg}\")")
         
 
             
