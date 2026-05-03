@@ -169,19 +169,39 @@ while True:
                 print("New attendee added successfully.")
 
             except mysql.connector.Error as err:
-                print(f"***ERROR*** {err}")
-                #print(f"***ERROR*** ({err.errno}, \"{err.msg}\")")
+                print(f"***ERROR*** ({err.errno}, \"{err.msg}\")")
         
 
-            
+        
+        
+        
+        elif choice == "4":
+            valid = True
 
-    
-    
-    
-    
-    
-    
-    elif choice == "4":
+            attendee1ID = input("Enter Attendee 1 ID : ")
+            attendee2ID = input("Enter Attendee 2 ID : ")
+        
+            if attendee_id_1 == attendee_id_2:
+                print("You must enter two different Attendee IDs.")
+            
+            else:
+            
+                query = """
+                    MATCH (a:Attendee {attendee_id: $id1})-[r:CONNECTED_TO]-
+                        (b:Attendee {attendee_id: $id2})
+                    RETURN COUNT(r) AS relationship_count
+                """
+                result = tx.run(query, id1=attendee_id_1, id2=attendee_id_2)
+                record = result.single()
+                return record["relationship_count"] > 0
+            
+            
+            if "relationship_count" is None
+                print("One or both Attendee IDs do not exist in the MySQL database.")
+            
+        
+        
+        
         print("Goodbye")
         break
 
