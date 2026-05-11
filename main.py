@@ -171,10 +171,20 @@ while True:
         results = cursor.fetchall()
 
         if not results:
+            print()
+            print("Session Details")
+            print("-------------------")
             print("No speakers found with that name.")
         else:
+            print()
+            print(f"Session Details For {speaker}")
+            print("-------------------")
+
             for row in results:
-                print(row)
+                print(f"Speaker: {row[0]}")
+                print(f"Session: {row[1]}")
+                print(f"Room: {row[2]}")
+                print()
 
 
     # -----------------------------
@@ -187,6 +197,9 @@ while True:
             company_id = input("Enter Company ID: ").strip()
 
             if not company_id.isdigit() or int(company_id) <= 0:
+                print()
+                print("Company Search Error")
+                print("-------------------")
                 print("***ERROR*** Invalid company ID.")
                 continue
 
@@ -202,6 +215,9 @@ while True:
             company = cursor.fetchone()
 
             if company is None:
+                print()
+                print("Company Search Error")
+                print("-------------------")
                 print(f"Company with ID {company_id} does not exist.")
                 continue
 
@@ -229,12 +245,21 @@ while True:
             cursor.execute(query, (company_id,))
             results = cursor.fetchall()
 
+            print()
+            print(f"Attendees for {company_name}")
+            print("-------------------")
+
             if len(results) == 0:
-                print(f"{company_name} has no attendees registered for any sessions.")
+                print("No attendees registered for any sessions.")
             else:
-                print(f"Attendees for {company_name}:")
                 for row in results:
-                    print(row)
+                    print(f"Attendee: {row[0]}")
+                    print(f"DOB: {row[1]}")
+                    print(f"Session: {row[2]}")
+                    print(f"Speaker: {row[3]}")
+                    print(f"Date: {row[4]}")
+                    print(f"Room: {row[5]}")
+                    print()
 
             break
 
@@ -258,22 +283,34 @@ while True:
         companyID = input("Company ID: ").strip()
 
         if not attendeeID.isdigit() or int(attendeeID) <= 0:
+            print()
+            print("Attendee Entry Error")
+            print("-------------------")
             print("***ERROR*** Invalid attendee ID.")
             valid = False
         else:
             attendeeID = int(attendeeID)
 
         if not companyID.isdigit() or int(companyID) <= 0:
+            print()
+            print("Attendee Entry Error")
+            print("-------------------")
             print("***ERROR*** Invalid company ID.")
             valid = False
         else:
             companyID = int(companyID)
 
         if not valid_date(dob):
+            print()
+            print("Attendee Entry Error")
+            print("-------------------")
             print("***ERROR*** DOB must be in YYYY-MM-DD format.")
             valid = False
 
         if gender not in ["Male", "Female"]:
+            print()
+            print("Attendee Entry Error")
+            print("-------------------")
             print("***ERROR*** Gender must be Male or Female.")
             valid = False
 
@@ -288,6 +325,9 @@ while True:
             attendee_result = cursor.fetchone()
 
             if attendee_result is not None:
+                print()
+                print("Attendee Entry Error")
+                print("-------------------")
                 print(f"***ERROR*** Attendee ID {attendeeID} already exists.")
                 valid = False
 
@@ -301,6 +341,9 @@ while True:
             company_result = cursor.fetchone()
 
             if company_result is None:
+                print()
+                print("Attendee Entry Error")
+                print("-------------------")
                 print(f"***ERROR*** Company ID {companyID} does not exist.")
                 valid = False
 
@@ -314,9 +357,20 @@ while True:
             try:
                 cursor.execute(insert_query, (attendeeID, name, dob, gender, companyID))
                 conn.commit()
-                print("Attendee successfully added.")
+
+                print()
+                print("Attendee Added")
+                print("-------------------")
+                print(f"Attendee ID: {attendeeID}")
+                print(f"Name: {name}")
+                print(f"DOB: {dob}")
+                print(f"Gender: {gender}")
+                print(f"Company ID: {companyID}")
 
             except mysql.connector.Error as err:
+                print()
+                print("Attendee Entry Error")
+                print("-------------------")
                 print(f"***ERROR*** ({err.errno}, \"{err.msg}\")")
 
 
@@ -330,6 +384,7 @@ while True:
             attendee_id = input("Enter Attendee ID: ").strip()
 
             if not attendee_id.isdigit():
+                print()
                 print("***ERROR*** Invalid attendee ID.")
                 continue
 
@@ -346,8 +401,10 @@ while True:
                     attendee_name = "Unknown"
 
                 print()
-                print(f"Attendee: {attendee_id} - {attendee_name}")
-                print("Connected attendees:")
+                print(f"Connected Attendees For {attendee_name}")
+                print("-------------------")
+                print(f"Attendee ID: {attendee_id}")
+                print()
 
                 connections_found = False
 
@@ -362,7 +419,9 @@ while True:
                         else:
                             connected_name = "Unknown"
 
-                        print(f"{connected_id} - {connected_name}")
+                        print(f"Connected Attendee ID: {connected_id}")
+                        print(f"Connected Attendee Name: {connected_name}")
+                        print()
                         connections_found = True
 
                 if not connections_found:
@@ -374,13 +433,15 @@ while True:
 
             if mysql_attendee is not None:
                 print()
-                print(f"Attendee: {mysql_attendee[0]} - {mysql_attendee[1]}")
+                print(f"Connected Attendees For {mysql_attendee[1]}")
+                print("-------------------")
+                print(f"Attendee ID: {mysql_attendee[0]}")
                 print("No connections")
                 break
 
             print()
-            print("Attendee does not exist in either the MySQL or Neo4j database.")
-            print("Please enter a valid Attendee ID.")
+            print("***ERROR*** Attendee does not exist.")
+            
 
 
     # -----------------------------
@@ -394,6 +455,7 @@ while True:
             attendee_id_2 = input("Enter Attendee 2 ID: ").strip()
 
             if not attendee_id_1.isdigit() or not attendee_id_2.isdigit():
+                print()
                 print("***ERROR*** Attendee IDs must be numeric.")
                 continue
 
@@ -401,6 +463,7 @@ while True:
             attendee_id_2 = int(attendee_id_2)
 
             if attendee_id_1 == attendee_id_2:
+                print()
                 print("***ERROR*** An attendee cannot be connected to themselves.")
                 continue
 
@@ -408,17 +471,19 @@ while True:
             attendee_2 = get_attendee_from_mysql(attendee_id_2)
 
             if attendee_1 is None or attendee_2 is None:
-                print("***ERROR*** One or both attendee IDs do not exist in the MySQL database.")
+                print()
+                print("***ERROR*** One or both attendee IDs do not exist.")
                 continue
 
             if attendees_are_connected(attendee_id_1, attendee_id_2):
+                print()
                 print("***ERROR*** These attendees are already connected.")
                 continue
 
             create_attendee_connection(attendee_id_1, attendee_id_2)
 
             print()
-            print(f"{attendee_1[0]} - {attendee_1[1]} is now CONNECTED_TO {attendee_2[0]} - {attendee_2[1]}.")
+            print(f"{attendee_1[1]} is now connected to {attendee_2[1]}.")
             break
 
 
@@ -429,11 +494,14 @@ while True:
     elif choice == "6":
 
         print()
-        print("Rooms")
-        print("-----")
+        print("Room Details")
+        print("-------------------")
 
         for room in rooms_cache:
-            print(f"Room ID: {room[0]}, Room Name: {room[1]}, Capacity: {room[2]}")
+            print(f"Room ID: {room[0]}")
+            print(f"Room Name: {room[1]}")
+            print(f"Capacity: {room[2]}")
+            print()
 
 
     # -----------------------------
@@ -441,6 +509,9 @@ while True:
     # -----------------------------
 
     elif choice.lower() == "x":
+        print()
+        print("Exit Application")
+        print("-------------------")
         print("Exiting application.")
         break
 
@@ -450,6 +521,9 @@ while True:
     # -----------------------------
 
     else:
+        print()
+        print("Menu Error")
+        print("-------------------")
         print("***ERROR*** Invalid menu choice.")
 
 

@@ -1,0 +1,43 @@
+Innovation / Extra Functionality
+
+For the Python application, I added minor extra functionality.
+
+1. Improved Output Formatting
+
+The application does not just print raw database tuples directly to the screen. Query results are displayed with clear headings, labelled fields, spacing, and section separators. For example, speaker/session results, company attendee results, room details, and connected attendee results are shown in a more readable format.
+
+This improves the user experience because the output is easier to understand for a non-technical user. Instead of seeing results such as:
+
+('Dr. Niamh Burke', 'Customer 360 with SQL', 'Main Hall')
+
+the user sees labelled output such as:
+
+Speaker: Dr. Niamh Burke
+Session: Customer 360 with SQL
+Room: Main Hall
+
+2. Helper Functions
+
+I used helper functions to avoid repeating code and to make the application easier to maintain. These include:
+
+get_attendee_from_mysql(attendee_id)
+
+This function searches for an attendee in the MySQL database and returns the attendee details if found.
+
+get_connected_attendees_from_neo4j(attendee_id)
+
+This function handles the Neo4j query for finding attendee connections.
+
+attendees_are_connected(attendee_id_1, attendee_id_2)
+
+This function checks whether two attendees are already connected before a new connection is created.
+
+create_attendee_connection(attendee_id_1, attendee_id_2)
+
+This function creates the attendee relationship in Neo4j.
+
+valid_date(date_text)
+
+This function checks that dates entered by the user are in the correct YYYY-MM-DD format.
+
+Using these helper functions makes the program more organised and separates the main menu logic from the database query logic.
